@@ -2,7 +2,7 @@
 
 ## If you are here from Caroline's upstream apworld, you do not need to install any custom apworlds or libs, only the 3DS plugin and generated patch must be copied to your 3DS's SD card.
 
-1. Download the `plugin.3gx` [releases](https://github.com/LittlestCube/albw-ap-plugin/releases/latest).
+1. Download the `plugin.3gx` from [releases](https://github.com/LittlestCube/albw-ap-plugin/releases/latest).
 
 2. Copy `plugin.3gx` to `/luma/plugins/00040000000EC300/` on your SD card.
 
