@@ -22,12 +22,12 @@ jobs:
 
       - name: Build and install CTRPF
         run: |
-              set -eux
-              git clone --depth 1 https://github.com/Tekito-256/CTRPluginFramework.git /tmp/ctrpf
-              cd /tmp/ctrpf/Library
-              make dist-bin
-              mkdir -p "$DEVKITPRO/libctrpf"
-              tar xf dist-bin/libctrpf-*.tar.gz -C "$DEVKITPRO/libctrpf"      
+          set -eux
+          git clone --depth 1 https://github.com/Tekito-256/CTRPluginFramework.git /tmp/ctrpf
+          cd /tmp/ctrpf/Library
+          make dist-bin WARNINGS="-Wall"
+          mkdir -p "$DEVKITPRO/libctrpf"
+          tar xf dist-bin/libctrpf-*.tar.gz -C "$DEVKITPRO/libctrpf"    
     
       - name: Build the plugin
         shell: bash
