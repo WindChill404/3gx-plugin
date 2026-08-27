@@ -27,10 +27,11 @@ jobs:
           cd /tmp/ctrpf/Library
           sed -i 's/-Werror//g' Makefile
           make dist-bin
-          # Find the tar file (it's in Library/, not in a dist-bin/ subfolder)
-          ls *.tar.gz
+          # Copy the built library and headers directly into DevKitPro
           mkdir -p "$DEVKITPRO/libctrpf"
-          tar xf *.tar.gz -C "$DEVKITPRO/libctrpf"
+          cp -r lib "$DEVKITPRO/libctrpf/"
+          cp -r include "$DEVKITPRO/libctrpf/"
+          ls "$DEVKITPRO/libctrpf/lib/" "$DEVKITPRO/libctrpf/include/"
     
       - name: Build the plugin
         shell: bash
