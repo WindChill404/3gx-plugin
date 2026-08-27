@@ -100,7 +100,7 @@ namespace CTRPluginFramework
 		
 		else if (uninited)
 		{
-			OSD::Hide();
+
 			
 			char connect_msg[128];
 			snprintf(connect_msg, 128, "Run `/3ds %s' from the client...", ip_str);
@@ -129,7 +129,7 @@ namespace CTRPluginFramework
 			
 			if (recvlen != -1)
 			{
-				OSD::ClearAllNotifications();
+
 				
 				switch ((MemCommand) MEM(u32, &cmd[8]))
 				{
@@ -216,7 +216,7 @@ namespace CTRPluginFramework
 				svcSleepThread(250000000LL);
 			}
 			
-			OSD::ClearAllNotifications();
+
 		}
 		
 		else
