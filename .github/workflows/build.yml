@@ -20,20 +20,15 @@ jobs:
       - name: Check out this plugin
         uses: actions/checkout@v4
 
-      - name: Build and install CTRPluginFramework
-        shell: bash
+      - name: Build and install CTRPF
         run: |
           set -eux
-          git clone --depth 1 https://github.com/Nanquitas/CTRPluginFramework-BlankTemplate.git /tmp/ctrpf
+          git clone --depth 1 https://github.com/Tekito-256/CTRPluginFramework.git /tmp/ctrpf
           cd /tmp/ctrpf
-          # The framework needs libctru's headers, which the image provides.
-          make -j"$(nproc)"
-          # The Makefile looks for $(DEVKITPRO)/libctrpf
-          mkdir -p "$DEVKITPRO/libctrpf/lib" "$DEVKITPRO/libctrpf/include"
-          cp -r Includes/* "$DEVKITPRO/libctrpf/include/" 2>/dev/null || true
-          cp -r Library/*.a "$DEVKITPRO/libctrpf/lib/" 2>/dev/null || \
-            find . -name 'libctrpf*.a' -exec cp {} "$DEVKITPRO/libctrpf/lib/" \;
-
+          make dist-bin
+          mkdir -p "$DEVKITPRO/libctrpf"
+          tar xf dist-bin/libctrpf-*.tar.gz -C "$DEVKITPRO/libctrpf"   
+    
       - name: Build the plugin
         shell: bash
         run: |
