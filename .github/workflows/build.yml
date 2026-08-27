@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           set -eux
-          git clone --depth 1 https://github.com/Nanquitas/CTRPluginFramework.git /tmp/ctrpf
+          git clone --depth 1 https://github.com/Nanquitas/CTRPluginFramework-BlankTemplate.git /tmp/ctrpf
           cd /tmp/ctrpf
           # The framework needs libctru's headers, which the image provides.
           make -j"$(nproc)"
