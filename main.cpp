@@ -100,7 +100,7 @@ namespace CTRPluginFramework
 		
 		else if (uninited)
 		{
-			OSD::ClearAllNotifications();
+			OSD::Hide();
 			
 			char connect_msg[128];
 			snprintf(connect_msg, 128, "Run `/3ds %s' from the client...", ip_str);
