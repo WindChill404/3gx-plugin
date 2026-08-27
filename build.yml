@@ -1,0 +1,51 @@
+name: Build plugin
+
+# Builds the .3gx and attaches it to the run, so nobody needs a local devkitARM
+# install. The devkitPro image already carries the toolchain, libctru and
+# 3gxtool; CTRPluginFramework is the one piece it doesn't ship, so it's built
+# here and installed as libctrpf where the Makefile expects to find it.
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+
+    steps:
+      - name: Check out this plugin
+        uses: actions/checkout@v4
+
+      - name: Build and install CTRPluginFramework
+        shell: bash
+        run: |
+          set -eux
+          git clone --depth 1 https://github.com/Nanquitas/CTRPluginFramework.git /tmp/ctrpf
+          cd /tmp/ctrpf
+          # The framework needs libctru's headers, which the image provides.
+          make -j"$(nproc)"
+          # The Makefile looks for $(DEVKITPRO)/libctrpf
+          mkdir -p "$DEVKITPRO/libctrpf/lib" "$DEVKITPRO/libctrpf/include"
+          cp -r Includes/* "$DEVKITPRO/libctrpf/include/" 2>/dev/null || true
+          cp -r Library/*.a "$DEVKITPRO/libctrpf/lib/" 2>/dev/null || \
+            find . -name 'libctrpf*.a' -exec cp {} "$DEVKITPRO/libctrpf/lib/" \;
+
+      - name: Build the plugin
+        shell: bash
+        run: |
+          set -eux
+          export DEVKITARM="$DEVKITPRO/devkitARM"
+          export CTRPFLIB="$DEVKITPRO/libctrpf"
+          make -j"$(nproc)"
+          ls -la *.3gx
+
+      - name: Upload the plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-3gx
+          path: "*.3gx"
+          if-no-files-found: error
