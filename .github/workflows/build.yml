@@ -23,14 +23,14 @@ jobs:
       - name: Build and install CTRPF
         run: |
           set -eux
-          git clone --depth 1 --branch 0.8.0 https://gitlab.com/thepixellizeross/ctrpluginframework.git /tmp/ctrpf
+          git clone --depth 1 --branch develop https://gitlab.com/thepixellizeross/ctrpluginframework.git /tmp/ctrpf
           cd /tmp/ctrpf/Library
           sed -i 's/-Werror//g' Makefile
           make dist-bin
           mkdir -p "$DEVKITPRO/libctrpf"
           cp -r lib "$DEVKITPRO/libctrpf/"
           cp -r include "$DEVKITPRO/libctrpf/"
-          ls "$DEVKITPRO/libctrpf/lib/" "$DEVKITPRO/libctrpf/include/"
+          ls "$DEVKITPRO/libctrpf/lib/" "$DEVKITPRO/libctrpf/include/"   
 
       - name: Build the plugin
         shell: bash
