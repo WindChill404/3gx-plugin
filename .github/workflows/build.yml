@@ -35,9 +35,9 @@ jobs:
       - name: Install 3gxtool
         run: |
           set -eux
-          dkp-pacman -Syy --noconfirm
-          dkp-pacman -S 3gxtool --noconfirm
-          which 3gxtool   
+          curl -L -o /usr/local/bin/3gxtool "https://gitlab.com/thepixellizeross/3gxtool/-/releases/v1.2/downloads/3gxtool"
+          chmod +x /usr/local/bin/3gxtool
+          3gxtool --help   
     
       - name: Build the plugin
         shell: bash
