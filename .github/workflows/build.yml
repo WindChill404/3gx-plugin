@@ -37,9 +37,11 @@ jobs:
           set -eux
           git clone --depth 1 https://github.com/Nanquitas/3gxtool.git /tmp/3gxtool
           cd /tmp/3gxtool
-          ls -la
-          cat Makefile
-          g++ -O2 -o 3gxtool $(find . -maxdepth 1 \( -name '*.cpp' -o -name '*.c' \))
+          g++ -O2 -std=gnu++11 \
+            -I includes -I lib/yaml-cpp/include \
+            -o 3gxtool \
+            sources/*.cpp \
+            lib/yaml-cpp/lib/*.a
           cp 3gxtool /usr/local/bin/
           3gxtool --help   
     
