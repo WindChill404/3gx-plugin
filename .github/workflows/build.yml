@@ -32,14 +32,12 @@ jobs:
           cp -r include "$DEVKITPRO/libctrpf/"
           ls "$DEVKITPRO/libctrpf/lib/" "$DEVKITPRO/libctrpf/include/"   
 
-      - name: Build 3gxtool
+      - name: Install 3gxtool
         run: |
-          set -eux
-          git clone --depth 1 https://github.com/Nanquitas/3gxtool.git /tmp/3gxtool
-          cd /tmp/3gxtool
-          make
-          cp 3gxtool /usr/local/bin/   
-
+            set -eux
+            dpkg -i 3gxtool
+            which 3gxtool
+    
       - name: Build the plugin
         shell: bash
         run: |
