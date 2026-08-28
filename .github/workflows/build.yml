@@ -35,12 +35,13 @@ jobs:
       - name: Install 3gxtool
         run: |
           set -eux
-          # Check what assets exist
-          curl -s "https://api.github.com/repos/Nanquitas/3gxtool/releases/tags/v1.0" | grep browser_download_url
-          # Then download the Linux one (adjust filename if needed)
-          curl -L -o /usr/local/bin/3gxtool \
-            "https://github.com/Nanquitas/3gxtool/releases/download/v1.0/3gxtool"
-          chmod +x /usr/local/bin/3gxtool
+          git clone --depth 1 https://github.com/Nanquitas/3gxtool.git /tmp/3gxtool
+          cd /tmp/3gxtool
+          # Show what source files exist
+          ls *.cpp *.c
+          # Compile directly for Linux
+          g++ -O2 -o 3gxtool $(find . -maxdepth 1 \( -name '*.cpp' -o -name '*.c' \))
+          cp 3gxtool /usr/local/bin/
           3gxtool --help   
     
       - name: Build the plugin
