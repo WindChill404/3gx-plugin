@@ -38,9 +38,10 @@ jobs:
           set -eux
           export DEVKITARM="$DEVKITPRO/devkitARM"
           export CTRPFLIB="$DEVKITPRO/libctrpf"
+          export PATH="$DEVKITARM/bin:$PATH"
           make
-          ls -la *.3gx   
-
+          ls -la *.3gx
+    
       - name: Upload the plugin
         uses: actions/upload-artifact@v4
         with:
