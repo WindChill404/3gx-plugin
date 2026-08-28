@@ -35,6 +35,7 @@ jobs:
       - name: Install 3gxtool
         run: |
             set -eux
+            dpkg --add-https-key
             dpkg -i 3gxtool
             which 3gxtool
     
