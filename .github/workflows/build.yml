@@ -1,9 +1,13 @@
 name: Build plugin
 
 # Builds the .3gx and attaches it to the run, so nobody needs a local devkitARM
-# install. The devkitPro image already carries the toolchain, libctru and
-# 3gxtool; CTRPluginFramework is the one piece it doesn't ship, so it's built
-# here and installed as libctrpf where the Makefile expects to find it.
+# install.
+#
+# Both the framework and the packaging tool come from thepixellizeross, and that
+# matters. Nanquitas' 3gxtool still writes the original "3GX$0001" container with
+# version 0, which current Luma refuses with "Outdated plugin file" and error
+# 0xD8E07402. Pairing a current library with that old packager produces a plugin
+# that compiles perfectly and is then rejected on the console.
 
 on:
   push:
@@ -19,35 +23,43 @@ jobs:
     steps:
       - name: Check out this plugin
         uses: actions/checkout@v4
-    
-      - name: Build and install CTRPF
+
+      - name: Build and install CTRPluginFramework
         run: |
           set -eux
-          git clone --depth 1 --branch develop https://gitlab.com/thepixellizeross/ctrpluginframework.git /tmp/ctrpf
+          git clone --depth 1 --branch develop \
+            https://gitlab.com/thepixellizeross/ctrpluginframework.git /tmp/ctrpf
           cd /tmp/ctrpf/Library
           sed -i 's/-Werror//g' Makefile
           make dist-bin
           mkdir -p "$DEVKITPRO/libctrpf"
           cp -r lib "$DEVKITPRO/libctrpf/"
           cp -r include "$DEVKITPRO/libctrpf/"
-          ls "$DEVKITPRO/libctrpf/lib/" "$DEVKITPRO/libctrpf/include/"  
 
-      - name: Install 3gxtool
+      - name: Build the current 3gxtool
         run: |
           set -eux
-          apt-get update && apt-get install -y libyaml-cpp-dev
-          git clone --depth 1 https://github.com/Nanquitas/3gxtool.git /tmp/3gxtool
+          apt-get update && apt-get install -y libyaml-cpp-dev cmake
+          # Same maintainer as the framework above, so the container format it
+          # writes matches what current Luma expects.
+          git clone --depth 1 https://gitlab.com/thepixellizeross/3gxtool.git /tmp/3gxtool
           cd /tmp/3gxtool
-          g++ -O2 -std=gnu++11 \
-            -I includes -I /usr/include/yaml-cpp \
-            -o 3gxtool \
-            sources/*.cpp \
-            -lyaml-cpp
-          cp 3gxtool /usr/local/bin/
-          3gxtool --help   
-    
+          if [ -f CMakeLists.txt ]; then
+            cmake -B build -DCMAKE_BUILD_TYPE=Release
+            cmake --build build -j"$(nproc)"
+            find build -maxdepth 2 -type f -name '3gxtool' -exec cp {} /usr/local/bin/ \;
+          else
+            make -j"$(nproc)" || \
+              g++ -O2 -std=gnu++17 -I includes -I /usr/include/yaml-cpp \
+                  -o 3gxtool sources/*.cpp -lyaml-cpp
+            find . -maxdepth 2 -type f -name '3gxtool' -exec cp {} /usr/local/bin/ \;
+          fi
+          chmod +x /usr/local/bin/3gxtool
+          # Show which container version this build writes, so a future
+          # "Outdated plugin file" is easy to trace back to this step.
+          strings /usr/local/bin/3gxtool | grep -i '3GX\$' || true
+
       - name: Build the plugin
-        shell: bash
         run: |
           set -eux
           export DEVKITARM="$DEVKITPRO/devkitARM"
@@ -55,7 +67,10 @@ jobs:
           export PATH="$DEVKITARM/bin:$PATH"
           make
           ls -la *.3gx
-    
+          # The container magic should read 3GX$0002 or newer. 3GX$0001 means an
+          # old packager slipped in and Luma will reject the result.
+          head -c 8 *.3gx | xxd
+
       - name: Upload the plugin
         uses: actions/upload-artifact@v4
         with:
