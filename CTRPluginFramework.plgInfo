@@ -1,24 +1,18 @@
-Author: LittleCube, retargeted for Kirby: Planet Robobot
+Author: LittleCube
 
 Version: # Plugin version
   Major: 0
   Minor: 0
   Revision: 1
 
-Targets: 00040000001BB800, 0004000000183600
+Targets: 00040000001BB800
 
 Title: Kirby Planet Robobot Archipelago Plugin
 
-Summary: Connect to an Archipelago multiworld from a real 3DS!
+Summary: Connect to an Archipelago multiworld from the comfort of your real 3DS!
 
 Description: |
-  A plain memory pipe. It listens on UDP port 45987 and answers read and write
-  requests for the game's memory, which is how the Archipelago client watches
-  your progress and hands you items. It holds no game logic of its own.
-
-  Originally written by LittleCube for A Link Between Worlds. The only change
-  is the Targets line above, because a plugin will not load under a title it
-  does not declare.
+  A memory bridge for the Kirby Planet Robobot Archipelago randomizer.
 
 Compatibility: Any
 
