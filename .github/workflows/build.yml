@@ -67,9 +67,17 @@ jobs:
           export PATH="$DEVKITARM/bin:$PATH"
           make
           ls -la *.3gx
-          # The container magic should read 3GX$0002 or newer. 3GX$0001 means an
-          # old packager slipped in and Luma will reject the result.
-          head -c 8 *.3gx | xxd
+
+      - name: Report the container version
+        # Informational only. The magic should read 3GX$0002 or newer; 3GX$0001
+        # means an old packager slipped in and Luma will reject the plugin with
+        # "Outdated plugin file". Kept in its own step, and unable to fail, so a
+        # missing tool can never throw away a good build.
+        continue-on-error: true
+        run: |
+          for f in *.3gx; do
+            echo "$f magic: $(head -c 8 "$f" | od -An -c | tr -s ' ')"
+          done
 
       - name: Upload the plugin
         uses: actions/upload-artifact@v4
